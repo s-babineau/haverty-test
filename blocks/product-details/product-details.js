@@ -114,6 +114,7 @@ export default async function decorate(block) {
       imageParams: {
         ...IMAGES_SIZES,
       },
+      
     })($gallery),
 
     // Header
@@ -129,7 +130,25 @@ export default async function decorate(block) {
     pdpRendered.render(ProductOptions, { hideSelectedValue: false })($options),
 
     // Configuration  Quantity
-    pdpRendered.render(ProductQuantity, {})($quantity),
+    pdpRendered.render(ProductQuantity, {slots: {
+    Quantity: (ctx) => {
+      // quantity decoration
+      const quantity = document.createElement('div');
+      quantity.classList.add('quantity-decoration');
+      quantity.innerText = 'Quantity';
+      ctx.prependChild(quantity);
+
+      const promo = document.createElement('div');
+      promo.classList.add('promo');
+      promo.innerText = 'Buy 2, Get 1 Free';
+      ctx.appendChild(promo);
+
+      ctx.onChange((next) => {
+        quantity.innerText = `${next.dictionary.Custom.quantityLabel}`;
+        promo.innerText = `${next.dictionary.Custom.promoLabel}:`;
+      });
+    },
+  },})($quantity),
 
     // Configuration – Button - Add to Cart
     UI.render(Button, {
